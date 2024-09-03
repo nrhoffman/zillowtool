@@ -2,22 +2,39 @@ import configparser
 import connection
 import csvreader
 import pandas as pd
-import seaborn as sb
-from matplotlib import pyplot as plt
+import sys
+from flask import Flask, jsonify
+from flask_cors import CORS
 
+#Set up Flask:
+app = Flask(__name__)
+#Set up Flask to bypass CORS:
+cors = CORS(app)
+
+#Read the config file
 config = configparser.ConfigParser()
 config.read('./backend/config/config.cfg')
 
+#Setup connection with Postgres database
 psql = connection.Connection(config, config["VALUES"]["CreateTables"])
 
 # csvreader.csvreader(config, psql)
 
-temp_df = psql.readdata("OH", "Cincinnati")
+#Create the get-states API POST endpoint:
+@app.route("/getstates", methods=["GET"])
+def getStates():
+    data = psql.getstates()
+    return jsonify(data)
 
-g = sb.FacetGrid(temp_df, col_wrap=4, height=4, col='type', sharex=True, sharey=False) 
-g.map(sb.lineplot, "date", "value")    
-g.set_titles("{col_name}")
-g.set_axis_labels("date", "value")
-g.add_legend()
+@app.route("/getcities/<state>", methods=["GET"])
+def getCities(state):
+    data = psql.getcities(state)
+    return jsonify(data)
 
-plt.show()
+@app.route("/getdata/<state>/<city>", methods=["GET"])
+def getData(state, city):
+    data = psql.getdata(state, city)
+    return data.to_json(orient="records")
+
+if __name__ == "__main__": 
+   app.run(debug=True)

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Zillow Tool
+        </title>
+    </head>
+    <body>
+        <label for="state">Choose an option:</label>
+        <select name="State" id="state" onchange="populateCities(state)">
+            <option value=" "> </option>
+        </select>
+
+        <label for="city">Choose an option:</label>
+        <select name="City" id="city" onchange="populatePlots(state, city)"></select>
+
+        <!-- Containers for dynamic plots will be created by JavaScript -->
+
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script src="javascript/init.js"></script>
+    </body>
+</html>
+ 

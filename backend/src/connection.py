@@ -79,7 +79,29 @@ class Connection():
         cur.close()
         connect.close()
 
-    def readdata(self, state, city):
+    def getstates(self):
+        connect = self.connectdb()
+        cur = connect.cursor()
+        query = "SELECT DISTINCT state FROM meanpricecut"
+        cur.execute(query)
+        list = cur.fetchall()
+        state_list = [state[0] for state in list]
+        cur.close()
+        connect.close()
+        return sorted(state_list)
+    
+    def getcities(self, state):
+        connect = self.connectdb()
+        cur = connect.cursor()
+        query = "SELECT DISTINCT city FROM meanpricecut WHERE state = '"+state+"'"
+        cur.execute(query)
+        list = cur.fetchall()
+        city_list = [city[0] for city in list]
+        cur.close()
+        connect.close()
+        return sorted(city_list)
+
+    def getdata(self, state, city):
         connect = self.connectdb()
         cur = connect.cursor()
         cur.execute("""SELECT table_name FROM information_schema.tables
